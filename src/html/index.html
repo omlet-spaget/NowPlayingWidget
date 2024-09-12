@@ -1,0 +1,123 @@
+<html>
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500;700;900&display=swap" rel="stylesheet">
+
+    <link href="style.css" rel="stylesheet" />
+</head>
+    <body>
+        <div id="widget" class="widget" onclick="$(this).toggleClass('new-song')">
+            <div class="outer">
+                <div class="inner">
+                    <div class="thumbnail">
+                        <img src="" style="visibility:hidden" onerror="this.style.visibility='hidden'" onload="this.style.visibility='visible'" />
+                        <div id="status" class="status"><span></span><span></span><span></span><span></span></div>
+                    </div>
+                    <div class="track">
+                        <div id="artist"><span></span></div>
+                        <div id="title"><span></span></div>
+                        <div id="progress" class="progress"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script type="text/javascript">
+            function getQuery(q, def) {
+                let res = (window.location.search.match(new RegExp('[?&]' + q + '(=([^&]+)|)')) || [, , def])[2];
+                return res || '1';
+            }
+
+            if (getQuery('rgb', '0') === '1') {
+                $('#widget').addClass('rgb');
+            }
+            if (getQuery('status', '1') === '0') {
+                $('#status').addClass('hidden');
+            }
+            if (getQuery('progress', '1') === '0') {
+                $('#progress').addClass('hidden');
+            }
+
+            let info = {};
+
+            function update() {
+                $.ajax({
+                    url: "/media-info",
+                    method: "GET"
+                })
+                    .done(function (response) {
+                        info = response;
+
+                        let widget = $('div.widget');
+                        if (info.playing) {
+                            widget.addClass('playing');
+                            widget.removeClass('stop');
+                        } else {
+                            widget.removeClass('playing');
+                            widget.addClass('stop');
+                        }
+
+                        setInfo('artist', info.artist);
+                        setInfo('title', info.title);
+
+                        if (info.playing && (info.artist || info.title)) {
+                            $('img')[0].src = '/thumbnail?' + $.param({ a: info.artist, t: info.title });
+                        }
+
+                        updateProgression();
+                    });
+            }
+
+            function updateProgression() {
+                if (info.playing && info.timelinePosition < info.timelineTotal) {
+                    info.timelinePosition += .2;
+                }
+                let pct = (100.0 * info.timelinePosition / info.timelineTotal);
+                $('.progress')[0].style.width = pct + '%';
+            }
+
+            newSongTimeout = 0;
+            function setInfo(name, value) {
+                const span = $('#' + name + '>span');
+
+                if (span.text() === value) return;
+
+                $('div.widget').addClass('new-song');
+                if (newSongTimeout)
+                    window.clearTimeout(newSongTimeout);
+                newSongTimeout = window.setTimeout(() => { $('div.widget').removeClass('new-song'); }, 3000);
+
+                $('#' + name).removeClass('fade-in');
+                $('#' + name).addClass('fade-out');
+
+                window.setTimeout(() => {
+                    $('#' + name).removeClass('fade-out');
+                    $('#' + name).addClass('fade-in');
+
+                    span.text(value);
+                    span.removeClass('bounce');
+
+                    window.setTimeout(() => { checkBouncing(name); }, 1000);
+                }, 250);
+            }
+
+            function checkBouncing(name) {
+                const span = $('#' + name + '>span');
+                var diff = ($('#' + name)[0].scrollWidth - $('#' + name).innerWidth());
+                if (diff > 1) {
+                    span.addClass('bounce');
+                    document.documentElement.style.setProperty('--' + name + '-animation-length', (5 + diff / 10.0) + 's');
+                    document.documentElement.style.setProperty('--' + name + '-end-translate', '-' + (diff + 5) + 'px');
+                } else {
+                    span.removeClass('bounce');
+                }
+            }
+
+            update();
+            window.setInterval(() => { update(); }, 1000);
+            window.setInterval(() => { updateProgression(); }, 200);
+        </script>
+    </body>
+</html>

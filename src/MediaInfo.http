@@ -1,0 +1,6 @@
+@CurrentMedia_HostAddress = http://localhost:5222
+
+GET {{CurrentMedia_HostAddress}}/media-info/
+Accept: application/json
+
+###

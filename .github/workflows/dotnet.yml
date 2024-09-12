@@ -1,0 +1,38 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: .NET
+
+on:
+  release:
+    branches: [ "master" ]
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Publish Project
+      run: dotnet publish ${{ env.PROJECT_PATH }} -c Release --self-contained -p:PublishSingleFile=true -r win-x64
+      
+    - name: Zip the Build
+      run: |
+          cd ./src/bin/Release/net8.0-windows10.0.19041.0/win-x64/publish
+          zip -r /home/runner/work/${{ secrets.ReleaseZipName }} *
+
+    - name: Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: /home/runner/work/${{ secrets.ReleaseZipName }}

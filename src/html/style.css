@@ -1,0 +1,362 @@
+﻿* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --artist-animation-length: 7.5s;
+    --title-animation-length: 5s;
+}
+
+.hidden {
+    display: none;
+}
+
+div.widget {
+    font-family: 'Roboto', sans-serif;
+    background: #1F1F1F;
+    background-clip: padding-box;
+    border: solid 2px transparent;
+    border-radius: 0.8rem;
+    padding: 0;
+    margin: 8px;
+    opacity: 0;
+    transition: 2s;
+    transition-delay: 1s;
+    position: relative;
+    width: 17rem;
+    height: 4rem;
+}
+
+    div.widget div.outer {
+        position: relative;
+        height: 100%;
+        width: 100%;
+        overflow: clip;
+        border-radius: 0.7rem;
+        background: #1F1F1F;
+        background-clip: padding-box;
+    }
+
+    div.widget div.inner {
+        position: relative;
+        height: 100%;
+        width: 100%;
+        overflow: clip;
+        border-radius: 0.7rem;
+        display: flex;
+        flex-direction: row;
+    }
+
+    div.widget.playing {
+        opacity: 1;
+    }
+
+    div.widget.stop {
+    }
+
+div.progress {
+    background: white;
+    position: relative;
+    top: 5px;
+    height: 1px;
+    transition:.2s;
+}
+
+div.thumbnail {
+    position: relative;
+    height: 100%;
+    width: 4rem;
+}
+
+    div.thumbnail img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+    }
+
+div.track {
+    flex: 1;
+    padding: 0.65rem;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+
+#artist {
+    flex: 1;
+    display: inline;
+    text-transform: uppercase;
+    color: #9C979A;
+    overflow: hidden;
+    font-size: 70%;
+    font-weight: 900;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+    #artist span {
+        display: inline-block;
+        text-align: left;
+    }
+
+        #artist span.bounce {
+            animation: bounce-artist var(--artist-animation-length) linear infinite alternate;
+        }
+
+#title {
+    flex: 1.5;
+    display: inline;
+    color: #309956;
+    font-size: 110%;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+    #title span {
+        display: inline-block;
+        text-align: left;
+    }
+
+        #title span.bounce {
+            animation: bounce-title var(--title-animation-length) linear infinite alternate;
+        }
+
+.fade-out {
+    animation: fade-out 0.25s linear forwards;
+}
+
+.fade-in {
+    animation: fade-in 0.25s linear forwards;
+}
+
+@keyframes bounce-artist {
+    0%,10% {
+        transform: translateX(0);
+    }
+
+    90%, 100% {
+        transform: translateX(var(--artist-end-translate));
+    }
+}
+
+@keyframes bounce-title {
+    0%,10% {
+        transform: translateX(0);
+    }
+
+    90%, 100% {
+        transform: translateX(var(--title-end-translate));
+    }
+}
+
+@keyframes fade-out {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.status {
+    width: 24px;
+    height: 1.5rem;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+}
+    .status span {
+        height: 100%;
+        width: 4px;
+        background: white;
+        transform-origin: bottom;
+        margin: 2px;
+        box-shadow: 0 0 2px black;
+        -webkit-box-shadow: 0 0 2px black;
+    }
+
+.stop .status span {
+    animation: zerosound 3s forwards;
+}
+
+.playing .status span:nth-child(1) {
+    animation: sound1 1.2s infinite ease-in;
+}
+
+.playing .status span:nth-child(2) {
+    animation: sound2 1s infinite ease-in;
+}
+
+.playing .status span:nth-child(3) {
+    animation: sound3 1.1s infinite ease-in;
+}
+
+.playing .status span:nth-child(4) {
+    animation: sound4 1.15s infinite ease-in;
+}
+
+.rgb .status span:nth-child(1) {
+    background: #FF000E;
+}
+
+.rgb .status span:nth-child(2) {
+    background: #FAD220;
+}
+
+.rgb .status span:nth-child(3) {
+    background: #138F3E;
+}
+
+.rgb .status span:nth-child(4) {
+    background: #BC00B6;
+}
+
+@keyframes zerosound {
+    to {
+        transform: scaleY(0);
+    }
+}
+
+@keyframes sound1 {
+    0% {
+        transform: scaleY(.2);
+    }
+
+    20% {
+        transform: scaleY(.4);
+    }
+
+    50% {
+        transform: scaleY(.7);
+    }
+
+    80% {
+        transform: scaleY(.9);
+    }
+
+    100% {
+        transform: scaleY(.2);
+    }
+}
+
+@keyframes sound2 {
+    0% {
+        transform: scaleY(.9);
+    }
+
+    20% {
+        transform: scaleY(.2);
+    }
+
+    50% {
+        transform: scaleY(.4);
+    }
+
+    80% {
+        transform: scaleY(.7);
+    }
+
+    100% {
+        transform: scaleY(.9);
+    }
+}
+
+@keyframes sound3 {
+    0% {
+        transform: scaleY(.7);
+    }
+
+    20% {
+        transform: scaleY(.9);
+    }
+
+    50% {
+        transform: scaleY(.2);
+    }
+
+    80% {
+        transform: scaleY(.4);
+    }
+
+    100% {
+        transform: scaleY(.7);
+    }
+}
+
+@keyframes sound4 {
+    0% {
+        transform: scaleY(.5);
+    }
+
+    20% {
+        transform: scaleY(.2);
+    }
+
+    50% {
+        transform: scaleY(.7);
+    }
+
+    80% {
+        transform: scaleY(.9);
+    }
+
+    100% {
+        transform: scaleY(.5);
+    }
+}
+
+div.widget::after {
+    --border-angle: 0turn;
+    border-radius: 0.75rem;
+    position: absolute;
+    top: -2px;
+    bottom: -2px;
+    left: -2px;
+    right: -2px;
+    background: conic-gradient(from var(--border-angle), #BC00B6 0%, #FF000E 25%, #FAD220 50%, #138F3E 75%, #BC00B6 100%);
+    content: '';
+    z-index: -1;
+    animation: bg-spin 3s linear infinite;
+    opacity: 0;
+    transition: 1s;
+}
+
+div.widget.new-song::after {
+    opacity: 1;
+}
+
+
+@keyframes bg-spin {
+    to {
+        --border-angle: 3turn;
+    }
+}
+
+@property --border-angle {
+    syntax: "<angle>";
+    inherits: true;
+    initial-value: 0turn;
+}
+
+@property --alpha {
+    syntax: "<percentage>";
+    inherits: true;
+    initial-value: 100%;
+}
